@@ -1,35 +1,32 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 import noPoster from '../assets/images/darth-vader.jpg';
 
 function SearchMovies(){
 
-	/* const movies = [
-		{
-			"Title": "Parchís",
-			"Year": "1983",
-			"Poster": "https://m.media-amazon.com/images/M/MV5BYTgxNjg2MTAtYjhmYS00NjQwLTk1YTMtNmZmOTMyNTAwZWUwXkEyXkFqcGdeQXVyMTY5MDE5NA@@._V1_SX300.jpg"
-		},
-		{
-			"Title": "Brigada en acción",
-			"Year": "1977",
-			"Poster": "N/A"
-		},
-	]; */
-
-
 	const [movies, setMovies] = useState([]);
-	const keyword = 'action';
+	const [keyword, setKeyword] = useState('');
+	const Input = useRef();
 
 	// Credenciales de API
 	const apiKey = 'b81ce4b6'; // Intenta poner cualquier cosa antes para probar
 
 	useEffect(() => {
-		fetch(`http://www.omdbapi.com/?s=${keyword}&apikey=${apiKey}`).then(result => result.json())
+		if(keyword!=''){
+			fetch(`http://www.omdbapi.com/?s=${keyword}&apikey=${apiKey}`).then(result => result.json())
 		.then(response=>{
 			setMovies(response.Search);
 		})
-	},[])
+		}
+	},[keyword])
+
+	let cambiarKeyword = e =>{
+		e.preventDefault();
+		if(Input.current.value!=''){
+			setKeyword(Input.current.value);
+		}
+		
+	}
 
 	return(
 		<div className="container-fluid">
@@ -39,10 +36,10 @@ function SearchMovies(){
 					<div className="row my-4">
 						<div className="col-12 col-md-6">
 							{/* Buscador */}
-							<form method="GET">
+							<form onSubmit={cambiarKeyword}>
 								<div className="form-group">
 									<label htmlFor="">Buscar por título:</label>
-									<input type="text" className="form-control" />
+									<input type="text" className="form-control" ref={Input} />
 								</div>
 								<button className="btn btn-info">Search</button>
 							</form>
